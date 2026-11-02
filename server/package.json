@@ -13,7 +13,7 @@
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\""
   },
   "dependencies": {
-    "@fastify/static": "^10.1.7",
+    "@fastify/static": "^10.1.8",
     "@gtfs-rt-debugger/shared": "*",
     "csv-parse": "7.0.3",
     "fastify": "^5.12.7",
