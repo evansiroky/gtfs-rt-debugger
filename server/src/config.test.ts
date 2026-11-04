@@ -85,6 +85,14 @@ describe('loadConfig', () => {
     );
   });
 
+  it('leaves analytics off unless GA_MEASUREMENT_ID is set', () => {
+    expect(loadConfig(base).analyticsMeasurementId).toBeNull();
+    expect(loadConfig({ ...base, GA_MEASUREMENT_ID: '  ' }).analyticsMeasurementId).toBeNull();
+    expect(loadConfig({ ...base, GA_MEASUREMENT_ID: 'G-ABC123XYZ9' }).analyticsMeasurementId).toBe(
+      'G-ABC123XYZ9',
+    );
+  });
+
   it('clamps retention above 60 minutes to 60, with a warning', () => {
     const config = loadConfig({ ...base, RETENTION_MS: String(2 * RETENTION_CEILING_MS) });
     expect(config.retentionMs).toBe(RETENTION_CEILING_MS);
@@ -138,6 +146,9 @@ describe('loadConfig', () => {
     ['fetch timeout below one second', { ...base, RT_TIMEOUT_MS: '10' }],
     ['retention below one second', { ...base, RETENTION_MS: '1' }],
     ['zero rate limit', { ...base, RATE_LIMIT_PER_MIN: '0' }],
+    ['analytics ID that is not GA4', { ...base, GA_MEASUREMENT_ID: 'UA-12345-1' }],
+    ['analytics ID in lower case', { ...base, GA_MEASUREMENT_ID: 'g-abc123' }],
+    ['analytics ID with a script tag', { ...base, GA_MEASUREMENT_ID: 'G-A"></script>' }],
   ])('refuses to start: %s', (_name, env) => {
     expect(problems(env).length).toBeGreaterThan(0);
   });

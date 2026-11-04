@@ -38,6 +38,8 @@ locals {
       EXIT_ON_IDLE = "true"
       TILE_HOST    = var.tile_host
     },
+    # Analytics are off unless an ID is set; the server then adds no Google origin to its CSP.
+    var.ga_measurement_id == "" ? {} : { GA_MEASUREMENT_ID = var.ga_measurement_id },
   )
 
   # The billing account the project is linked to, unless overridden. CI has no billing-account

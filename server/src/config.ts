@@ -43,6 +43,8 @@ export interface Config {
   readonly rateLimitPerMinute: number;
   /** Map tile origin allowed by the CSP (style, tiles, sprites and glyphs). */
   readonly tileHost: string;
+  /** Google Analytics 4 measurement ID (`G-…`), or null when analytics are off (analytics.md). */
+  readonly analyticsMeasurementId: string | null;
   /** Directory of the built web app; served when it contains `index.html`. */
   readonly webDistDir: string;
   /** Non-fatal adjustments made while loading (no values included). */
@@ -152,6 +154,14 @@ export function loadConfig(env: Env): Config {
     problems.push('TILE_HOST must be an http(s) origin such as https://tiles.example.com');
   }
 
+  // Public by nature (it appears in every page's network traffic), but errors still never echo values.
+  const analyticsMeasurementId = read('GA_MEASUREMENT_ID') ?? null;
+  if (analyticsMeasurementId !== null && !/^G-[A-Z0-9]+$/.test(analyticsMeasurementId)) {
+    problems.push(
+      'GA_MEASUREMENT_ID must be a Google Analytics 4 measurement ID such as G-XXXXXXXXXX',
+    );
+  }
+
   const config = {
     scheduleUrl,
     vehiclePositionsUrl,
@@ -170,6 +180,7 @@ export function loadConfig(env: Env): Config {
     historyMemoryLimitBytes,
     rateLimitPerMinute: integer('RATE_LIMIT_PER_MIN', 120),
     tileHost: tileHost.replace(/\/$/, ''),
+    analyticsMeasurementId,
     webDistDir: path.resolve(read('WEB_DIST_DIR') ?? DEFAULT_WEB_DIST_DIR),
     warnings,
   };
