@@ -35,7 +35,7 @@ value, supplied by the operator).
 - `shared/src/api.ts`: `ConfigResponse`.
 - `web/src/api/client.ts` + `web/src/analytics/`: fetch the config once on load; when it carries an ID,
   inject `gtag/js?id=…` and `gtag('config', id, { send_page_view: false, allow_google_signals: false,
-  allow_ad_personalization_signals: false })`; a `PageViewTracker` inside the router sends `page_view` on
+  allow_ad_personalization_signals: false })`; the `<Analytics />` component inside the router sends `page_view` on
   mount and on each route-path change using the matched route's template.
 - `infra`: `ga_measurement_id` variable (default `""`) → `GA_MEASUREMENT_ID` only when non-empty.
 - Docs: `server/README.md`, `infra/README.md`.
