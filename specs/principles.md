@@ -24,7 +24,8 @@ deciding whether to keep something, the answer is no unless a screen needs it ri
 GTFS and GTFS-RT hosts do not send CORS headers and may require credentials in the URL.
 Only the server contacts them, only at URLs fixed in its configuration. The browser talks
 only to this app's own origin (plus map tiles), and no feed URL or credential ever reaches
-the browser, a log line, or an error message.
+the browser, a log line, or an error message. (Operator-enabled analytics is the one other
+third-party origin, and it is sent no feed data: [analytics](behaviors/analytics.md).)
 
 ## Show the feed as it is
 

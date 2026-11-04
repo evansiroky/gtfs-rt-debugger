@@ -44,7 +44,9 @@ new one starts dormant). State is process memory only — see
   The provider's origin is configured in exactly two places that must agree: the web app's map
   style URL, and the server's map tile host setting
   ([behaviors/configuration.md](behaviors/configuration.md#tunables-and-defaults)), which the
-  Content-Security-Policy allows. Map assets are the only third-party requests the browser makes.
+  Content-Security-Policy allows. Map assets are the only third-party requests the browser makes,
+  unless the operator enables Google Analytics ([behaviors/analytics.md](behaviors/analytics.md)),
+  which adds the Google tag and collection origins and nothing else.
 - **Tests:** Vitest for server and web logic; behaviors with a numeric or temporal rule
   (service-date resolution, active-trip window, dormancy timers) are unit-tested with an
   injectable clock.
@@ -82,8 +84,10 @@ Exact internal layout of `server/` and `web/` is an implementation decision.
 - The API is rate-limited per client address ([api/conventions.md](api/conventions.md)).
 - Responses carry a Content-Security-Policy that allows only the app's own origin and the
   configured tile host. The map library additionally needs `worker-src 'self'` (its worker is
-  a file served by the app), `data:`/`blob:` images and inline styles; no other third-party origin
-  is allowed.
+  a file served by the app), `data:`/`blob:` images and inline styles. The Google Analytics
+  origins are added to `script-src`, `connect-src` and `img-src` only while a measurement ID is
+  configured ([behaviors/analytics.md](behaviors/analytics.md)); no other third-party origin is
+  allowed, and no inline script ever is.
 - Process hygiene: request bodies, header/request timeouts and route parameter lengths are
   bounded; `X-Content-Type-Options: nosniff` and `Referrer-Policy: no-referrer` accompany every
   response; SIGTERM/SIGINT drain with a hard deadline and an unhandled error exits non-zero.
