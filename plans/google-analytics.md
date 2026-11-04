@@ -41,14 +41,14 @@ value, supplied by the operator).
 - Docs: `server/README.md`, `infra/README.md`.
 
 ## Validation
-- [ ] `npm run lint`, `typecheck`, `test`, `build` and `format:check` pass.
-- [ ] With no ID: the CSP is byte-for-byte the previous policy, `GET /config` returns `analytics: null`,
+- [x] `npm run lint`, `typecheck`, `test`, `build` and `format:check` pass.
+- [x] With no ID: the CSP is byte-for-byte the previous policy, `GET /config` returns `analytics: null`,
       and the web app makes no request to a Google origin.
-- [ ] With an ID: the CSP gains only the Google origins in the three directives; `GET /config` returns
+- [x] With an ID: the CSP gains only the Google origins in the three directives; `GET /config` returns
       the ID; an invalid ID refuses startup without echoing the value.
-- [ ] The web app sends `page_view` on load and on navigation, with `/trips/:tripId` rather than the trip
+- [x] The web app sends `page_view` on load and on navigation, with `/trips/:tripId` rather than the trip
       ID, and no query string or fragment.
-- [ ] A failing `/config` request leaves the app working and sends nothing.
+- [x] A failing `/config` request leaves the app working and sends nothing.
 - [ ] `terraform fmt -check` and `validate` pass (if terraform is available).
 
 ## Risks / unknowns
@@ -56,7 +56,16 @@ value, supplied by the operator).
 - **CSP origins** — the Google origin list follows Google's published CSP guidance for GA4 and may change.
 
 ## Notes
-(Populated at closeout.)
+- Verified against the built server: with no ID, `/config` is `{"analytics":null}` and `script-src` is
+  `'self'`; with `G-SMOKE12345` the ID is served and the three directives gain the Google origins; a
+  malformed ID refuses startup naming only the setting.
+- `terraform` is not installed in the build container, so the `ga_measurement_id` variable and the
+  `locals.tf` merge were written to mirror the existing `tile_host` pattern and are unvalidated.
+- Page views are reported on every pathname change, so moving between two trips is two views of
+  `/trips/:tripId`. Only the dashboard, trip and not-found routes exist; add new routes to
+  `ROUTE_TEMPLATES` in `web/src/analytics/google-tag.ts` or they report their literal path.
+- `npm run e2e` was not run.
 
 ## Follow-ups
-(Populated at closeout.)
+- Tracked as: a consent banner or Do-Not-Track handling is the operator's call per jurisdiction; add
+  it before enabling the setting if the audience needs one.
