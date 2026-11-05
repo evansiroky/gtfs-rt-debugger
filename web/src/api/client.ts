@@ -1,4 +1,4 @@
-import type { ApiErrorBody, SessionStatus } from '@gtfs-rt-debugger/shared';
+import type { ApiErrorBody, ConfigResponse, SessionStatus } from '@gtfs-rt-debugger/shared';
 
 export const API_BASE = '/api/v1';
 
@@ -163,4 +163,18 @@ export function startSession(signal?: AbortSignal): Promise<SessionStatus> {
 
 export function pingSession(signal?: AbortSignal): Promise<SessionStatus> {
   return request('POST', '/session/ping', { signal, validate: isSessionStatus });
+}
+
+/** The minimum a `ConfigResponse` must have for the app to trust it. */
+function isConfigResponse(body: unknown): body is ConfigResponse {
+  return (
+    isObject(body) &&
+    (body.analytics === null ||
+      (isObject(body.analytics) && typeof body.analytics.measurementId === 'string'))
+  );
+}
+
+/** `GET /config`: the deployment settings the app needs at runtime ([config](../../../specs/api/config.md)). */
+export function getConfig(signal?: AbortSignal): Promise<ConfigResponse> {
+  return request('GET', '/config', { signal, validate: isConfigResponse });
 }

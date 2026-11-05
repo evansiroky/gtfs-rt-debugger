@@ -87,6 +87,14 @@ export interface SessionStatus {
   };
 }
 
+// --- config.md ----------------------------------------------------------------------------------
+
+/** Response of `GET /api/v1/config`. */
+export interface ConfigResponse {
+  /** Null when analytics is not configured. */
+  analytics: { measurementId: string } | null;
+}
+
 // --- dashboard.md -------------------------------------------------------------------------------
 
 export const CONFIGURATION_ERROR_CODES = [

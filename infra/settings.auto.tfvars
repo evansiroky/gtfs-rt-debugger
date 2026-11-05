@@ -11,5 +11,6 @@
 # vehicle_positions_enabled = true
 # trip_updates_enabled      = true
 # tile_host                 = "https://tiles.openfreemap.org"
+# ga_measurement_id         = "G-XXXXXXXXXX"   # default: analytics off
 # idle_timeout_ms           = 900000
 # registry_keep_count       = 10

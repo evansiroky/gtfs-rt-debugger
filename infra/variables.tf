@@ -231,3 +231,14 @@ variable "tile_host" {
     error_message = "tile_host must be an http or https origin such as https://tiles.example.com: no path, query or credentials (a leading *. host wildcard is allowed)."
   }
 }
+
+variable "ga_measurement_id" {
+  description = "Google Analytics 4 measurement ID (GA_MEASUREMENT_ID). Empty (the default) turns analytics off; set, the web app reports page views and the Content-Security-Policy allows Google's tag and collection origins."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = can(regex("^(G-[A-Z0-9]+)?$", var.ga_measurement_id))
+    error_message = "ga_measurement_id must be empty or a Google Analytics 4 measurement ID such as G-XXXXXXXXXX."
+  }
+}

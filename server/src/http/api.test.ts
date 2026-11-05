@@ -286,6 +286,45 @@ describe('API conventions', () => {
     expect(csp).not.toContain('openfreemap');
   });
 
+  it('allows the Google Analytics origins only while a measurement ID is configured', async () => {
+    await setup();
+    const off = String((await post('/session/ping')).headers['content-security-policy']);
+    expect(off).not.toMatch(/google|googletagmanager/);
+    await app!.close();
+
+    await setup({ GA_MEASUREMENT_ID: 'G-TEST123456' });
+    const csp = String((await post('/session/ping')).headers['content-security-policy']);
+    const directive = (name: string) => csp.split('; ').find((d) => d.startsWith(`${name} `));
+    expect(directive('script-src')).toBe("script-src 'self' https://*.googletagmanager.com");
+    expect(directive('connect-src')).toContain('https://*.google-analytics.com');
+    expect(directive('connect-src')).toContain('https://*.analytics.google.com');
+    expect(directive('img-src')).toContain('https://*.google-analytics.com');
+    expect(directive('default-src')).toBe("default-src 'self'");
+    expect(csp).not.toContain("'unsafe-inline' https"); // style-src is untouched
+    expect(csp).not.toContain("script-src 'self' 'unsafe-inline'");
+  });
+
+  describe('GET /config', () => {
+    it('reports analytics as null when not configured', async () => {
+      await setup();
+      const res = await app!.inject({ url: '/api/v1/config' });
+      expect(res.statusCode).toBe(200);
+      expect(res.json()).toEqual({ analytics: null });
+      expect(res.headers['cache-control']).toBe('no-store');
+    });
+
+    it('returns the configured measurement ID and nothing else', async () => {
+      await setup({ GA_MEASUREMENT_ID: 'G-TEST123456' });
+      const res = await app!.inject({ url: '/api/v1/config' });
+      expect(res.json()).toEqual({ analytics: { measurementId: 'G-TEST123456' } });
+    });
+
+    it('rejects query parameters', async () => {
+      await setup();
+      expectError(await app!.inject({ url: '/api/v1/config?x=1' }), 400, 'bad_request');
+    });
+  });
+
   it('answers router failures with the envelope, no-store and security headers', async () => {
     await setup();
     for (const url of ['/api/v1/session/%zz', '/api/v1/%E0%A4%A']) {

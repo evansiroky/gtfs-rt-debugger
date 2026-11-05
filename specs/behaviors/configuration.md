@@ -39,6 +39,7 @@ configured URL is not `https` or `http`.
 | Realtime history memory limit | 512 MiB                                     | data-retention                                                                    |
 | API rate limit                | 120 requests/min per client address         | [api/conventions](../api/conventions.md)                                          |
 | Map tile host                 | `https://tiles.openfreemap.org`             | [architecture](../architecture.md#stack) (allowed by the Content-Security-Policy) |
+| Analytics measurement ID      | none (analytics off)                        | [analytics](analytics.md); reaches the web app via [`GET /config`](../api/config.md) |
 
 The server refuses to start on a setting it cannot use, and its error messages name the
 setting, never its value:
@@ -48,6 +49,9 @@ setting, never its value:
   neither hammer a feed host nor wrap around to an immediate timer.
 - Exit on idle is on or off.
 - The map tile host is an `http` or `https` origin: no path, query or credentials.
+- The analytics measurement ID, when set, is a Google Analytics 4 ID: `G-` followed by
+  capital letters and digits. Unset or empty means analytics are off. Unlike a feed URL it is
+  not a secret; it is returned by the API.
 - A feed URL with credentials before the host (`https://user:pass@host/…`) is refused;
   credentials belong in the query string.
 - The realtime history memory limit holds at least two maximum-size realtime responses, so the

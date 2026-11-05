@@ -120,6 +120,7 @@ to `terraform destroy`, and destroy needs nothing else.
 | `vehicle_positions_enabled`   | `true`                                       | `false` omits the feed's variable and secret reference: the server treats the feed as not configured. |
 | `trip_updates_enabled`        | `true`                                       | As above. At least one of the two must stay enabled.                                                  |
 | `tile_host`                   | `https://tiles.openfreemap.org`              | Map tile origin the Content-Security-Policy allows (`TILE_HOST`).                                     |
+| `ga_measurement_id`           | `""` (analytics off)                         | `GA_MEASUREMENT_ID` (omitted when empty); enables page-view reporting and the CSP's Google origins.   |
 | `poll_interval_ms`            | `10000`                                      | `POLL_INTERVAL_MS`                                                                                    |
 | `rt_timeout_ms`               | `8000`                                       | `RT_TIMEOUT_MS`                                                                                       |
 | `rt_max_bytes`                | `26214400`                                   | `RT_MAX_BYTES`                                                                                        |

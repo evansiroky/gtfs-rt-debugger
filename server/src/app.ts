@@ -69,7 +69,7 @@ export interface App<S = undefined> {
 /** Composes the whole server. Nothing is fetched until a session start or ping wakes it. */
 export async function buildApp<S = undefined>(options: AppOptions<S>): Promise<App<S>> {
   const { config, exit, clock = systemClock } = options;
-  const headers = securityHeaders(config.tileHost);
+  const headers = securityHeaders(config.tileHost, config.analyticsMeasurementId !== null);
   const app = Fastify({
     logger: {
       level: options.logLevel ?? 'info',

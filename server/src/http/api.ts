@@ -1,4 +1,4 @@
-import type { SessionStatus } from '@gtfs-rt-debugger/shared';
+import type { ConfigResponse, SessionStatus } from '@gtfs-rt-debugger/shared';
 import type { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import type { Clock } from '../clock.js';
 import type { Config } from '../config.js';
@@ -58,6 +58,7 @@ export function apiPlugin<S>(context: ServerContext<S>, routes: readonly ApiRout
     });
 
     await sessionRoutes(api, context);
+    configRoutes(api, context);
     for (const register of routes) await register(api, context);
   };
 }
@@ -70,4 +71,14 @@ const sessionRoutes = (api: FastifyInstance, { session }: ServerContext<unknown>
   api.post('/session/ping', { preHandler: noQuery }, async (): Promise<SessionStatus> =>
     session.ping(),
   );
+};
+
+/** `GET /config` (config.md): public deployment settings; never wakes the server or counts as activity. */
+const configRoutes = (api: FastifyInstance, { config }: ServerContext<unknown>) => {
+  api.get('/config', { preHandler: rejectUnknownQuery([]) }, async (): Promise<ConfigResponse> => ({
+    analytics:
+      config.analyticsMeasurementId === null
+        ? null
+        : { measurementId: config.analyticsMeasurementId },
+  }));
 };
