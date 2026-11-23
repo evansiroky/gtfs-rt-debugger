@@ -25,6 +25,6 @@
   "dependencies": {
     "@gtfs-rt-debugger/shared": "*",
     "fflate": "^0.8.3",
-    "gtfs-realtime-bindings": "^2.2.0"
+    "gtfs-realtime-bindings": "^3.0.0"
   }
 }
